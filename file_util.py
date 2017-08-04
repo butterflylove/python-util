@@ -61,12 +61,13 @@ def segment_2_small_files(src_filename, sharding_file_size=40000000, des_dir="/h
     source_file.close()
 
 
-def merge_files(sharding_dir="/home/sharding_dir", target_file="/Users/zhangtianlong01/merged_file.txt"):
-    """将同一目录下的多个文本小文件，合并成一个文本文件
+def merge_files(sharding_dir="/home/sharding_dir", target_file="/Users/zhangtianlong01/merged_file.txt", sharding_file_prefix=r"."):
+    """将同一目录下 指定前缀名的多个小文件，合并成一个文本文件
     
     Args：
         sharding_dir:存放小文件的目录
         target_file:合并成的大文件的完整路径
+        sharding_file_prefix:小文件的文件名前缀，默认匹配任意前缀名的文件
     
     Returns:
         Boolean:是否合并成功
@@ -75,8 +76,10 @@ def merge_files(sharding_dir="/home/sharding_dir", target_file="/Users/zhangtian
         if sharding_dir[-1] != '/':
             sharding_dir += "/"
         file_list = [x for x in os.listdir(sharding_dir) if os.path.isfile(sharding_dir + x)]
-        pattern = re.compile(r'^\.')
-        file_list = [x for x in file_list if not pattern.match(x)]      # 过滤以[.]开头的文件
+        remove_pattern = re.compile(r'^\.')
+        file_list = [x for x in file_list if not remove_pattern.match(x)]      # 剔除以[.]开头的文件
+        prefix_pattern = re.compile(sharding_file_prefix)
+        file_list = [x for x in file_list if prefix_pattern.match(x)]   # 过滤符合指定前缀名的文件
         for item in file_list:
             content_list = []
             with open(sharding_dir + item) as f:
@@ -116,5 +119,6 @@ def extract_n_columns(src_file, des_file, col_no_list, delimiter='\t'):
 
 if __name__ == "__main__":
     print "RUNNING...."
+    merge_files(sharding_dir="/Users/zhangtianlong01/Desktop/dir", target_file="/Users/zhangtianlong01/Desktop/dir/xxx.txt")
     print "FIN!!!!"
 
