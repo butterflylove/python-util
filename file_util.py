@@ -88,6 +88,32 @@ def merge_files(sharding_dir="/home/sharding_dir", target_file="/Users/zhangtian
         return False     # 文件目录不存在
 
 
+def extract_n_columns(src_file, des_file, col_no_list, delimiter='\t'):
+    """从一个文件中提取出固定几列，再写入到新的文件中
+
+    Args:
+        src_file:读取文件的路径
+        des_file:写入文件的路劲
+        col_no_list:提取列的编号列表，编号从0开始计数，例如[0,4,6]
+        delimiter:所读取文件分割列的分隔符
+
+    Returns:
+        void
+    """
+    if len(col_no_list) == 0:
+        return
+    result = []
+    with open(src_file) as f:
+        for line in f:
+            arr = line.strip("\n").split(delimiter)
+            new_line = ""
+            for index in col_no_list:
+                new_line += arr[index] + "\t"
+            new_line = new_line[:-1] + "\n"
+            result.append(new_line)
+    append_lines(des_file, result)
+
+
 if __name__ == "__main__":
     print "RUNNING...."
     print "FIN!!!!"
